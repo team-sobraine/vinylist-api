@@ -1,0 +1,14 @@
+{
+    "name": "vinylist-api",
+    "version": "1.0.0",
+    "description": "infokup 2023",
+    "main": "server.js",
+    "author": "team-sobraine",
+    "dependencies": {
+        "core-js": "^3.27.1",
+        "cors": "^2.8.5",
+        "dotenv": "^16.0.3",
+        "express": "^4.18.2",
+        "mongoose": "^6.8.3"
+    }
+}
