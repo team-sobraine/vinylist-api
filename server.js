@@ -3,6 +3,7 @@ const { dbConnect, dbGet } = require("./database.js");
 const cors = require('cors');
 require('dotenv').config();
 let PORT = 8080;
+let PAGESIZE = 24;
 
 const app = express();
 app.use(cors());
@@ -61,6 +62,8 @@ app.get("/search", (req, res) => {
     let sortBy = translator[req.query.sortBy];
     let query = req.query.query;
     let findQuery = {};
+    let page = req.query.page;
+    let skips = PAGESIZE * (page - 1)
     if (query) {
         let words = query.split(' ');
         findQuery = { $or: [] };
@@ -81,6 +84,8 @@ app.get("/search", (req, res) => {
     }
     db.collection('vinyls')
         .find(findQuery)
+        .skip(skips)
+        .limit(PAGESIZE)
         .forEach(vinyl => vinyls.push(vinyl))
         .then(() => {
             vinyls = sortResults(vinyls, sortBy, sort);
@@ -96,7 +101,7 @@ app.get("/search", (req, res) => {
 app.get("/random", (req, res) => {
     let vinyls = [];
     db.collection('vinyls')
-        .aggregate([{ $sample: { size: 20 } }])
+        .aggregate([{ $sample: { size: PAGESIZE } }])
         .forEach(vinyl => vinyls.push(vinyl))
         .then(() => {
             res.status(200).json(vinyls);
