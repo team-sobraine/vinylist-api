@@ -1,5 +1,6 @@
 const express = require("express");
 const { dbConnect, dbGet } = require("./database.js");
+const cors = require('cors');
 require('dotenv').config();
 let PORT = 8080;
 
