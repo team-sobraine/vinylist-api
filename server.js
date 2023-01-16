@@ -1,6 +1,7 @@
 const express = require("express");
 const { dbConnect, dbGet } = require("./database.js");
 const cors = require('cors');
+const ObjectId = require('mongodb').ObjectId;
 require('dotenv').config();
 let PORT = 8080;
 let PAGESIZE = 24;
@@ -56,18 +57,15 @@ app.get("/search", (req, res) => {
         'author': 'Autor',
         'price': 'PriceEUR'
     }
-    let vinyls = [];
     let price = req.query.price;
     let sort = req.query.sort;
     let sortBy = translator[req.query.sortBy];
     let query = req.query.query;
     let page = req.query.page;
-    let id = req.query.id;
+    let vinyls = [];
     let findQuery = {};
     let skips = PAGESIZE * (page - 1)
-    if (id) {
-        findQuery = { '_id': id };
-    } else if (query) {
+    if (query) {
         let words = query.split(' ');
         findQuery = { $or: [] };
         words.forEach(word => {
@@ -100,6 +98,33 @@ app.get("/search", (req, res) => {
         });
 });
 
+app.get("/id/:id", (req, res) => {
+    let result;
+    let id = new ObjectId(req.params['id']);
+    db.collection('vinyls')
+        .find({ _id: id })
+        .limit(1)
+        .forEach(vinyl => result = vinyl)
+        .then(() => {
+            console.log(result);
+            let shopID = new ObjectId(result.ShopID);
+            db.collection('shops')
+                .find({ _id: shopID })
+                .limit(1)
+                .forEach(shop => result['Shop'] = shop)
+                .then(() => {
+                    res.status(200).json(result);
+                })
+                .catch((err) => {
+                    console.log(err);
+                    res.status(500).json({ error: "Could not fetch documents" });
+                });
+        })
+        .catch((err) => {
+            console.log(err);
+            res.status(500).json({ error: "Could not fetch documents" });
+        });
+});
 
 app.get("/random", (req, res) => {
     let vinyls = [];
