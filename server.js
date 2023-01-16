@@ -106,7 +106,6 @@ app.get("/id/:id", (req, res) => {
         .limit(1)
         .forEach(vinyl => result = vinyl)
         .then(() => {
-            console.log(result);
             let shopID = new ObjectId(result.ShopID);
             db.collection('shops')
                 .find({ _id: shopID })
