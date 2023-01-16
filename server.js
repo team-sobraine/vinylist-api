@@ -61,10 +61,13 @@ app.get("/search", (req, res) => {
     let sort = req.query.sort;
     let sortBy = translator[req.query.sortBy];
     let query = req.query.query;
-    let findQuery = {};
     let page = req.query.page;
+    let id = req.query.id;
+    let findQuery = {};
     let skips = PAGESIZE * (page - 1)
-    if (query) {
+    if (id) {
+        findQuery = { '_id': id };
+    } else if (query) {
         let words = query.split(' ');
         findQuery = { $or: [] };
         words.forEach(word => {
