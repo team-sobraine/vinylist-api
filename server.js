@@ -62,7 +62,7 @@ app.get("/search", (req, res) => {
     let sortBy = translator[req.query.sortBy];
     let query = req.query.query;
     let page = req.query.page;
-    let vinyls = [];
+    let response = { 'lastPage': false, 'vinyls': [] };
     let findQuery = {};
     let skips = PAGESIZE * (page - 1)
     if (query) {
@@ -87,10 +87,13 @@ app.get("/search", (req, res) => {
         .find(findQuery)
         .skip(skips)
         .limit(PAGESIZE)
-        .forEach(vinyl => vinyls.push(vinyl))
+        .forEach(vinyl => response.vinyls.push(vinyl))
         .then(() => {
-            vinyls = sortResults(vinyls, sortBy, sort);
-            res.status(200).json(vinyls);
+            if (response.vinyls.length < PAGESIZE) {
+                response['lastPage'] = true;
+            }
+            response.vinyls = sortResults(response.vinyls, sortBy, sort);
+            res.status(200).json(response);
         })
         .catch((err) => {
             console.log(err);
