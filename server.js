@@ -131,7 +131,7 @@ app.get("/id/:id", (req, res) => {
 app.get("/random", (req, res) => {
     let vinyls = [];
     db.collection('vinyls')
-        .aggregate([{ $match: { 'Image': { $not: "https://www.menartshop.hr/system/template/menart2018/images/Nema_Slike_350x525_v1_hr.png" } } }, { $sample: { size: PAGESIZE } }])
+        .aggregate([{ $sample: { size: PAGESIZE } }])
         .forEach(vinyl => vinyls.push(vinyl))
         .then(() => {
             res.status(200).json(vinyls);
