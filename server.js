@@ -42,12 +42,10 @@ dbConnect(process.env.MONGO_URI, (error) => {
         console.error(error);
     }
     db = dbGet();
-});
-
-
-// express listener
-app.listen(PORT, () => {
-    console.log(`Server started at port ${PORT}`);
+    // express listener
+    app.listen(PORT, () => {
+        console.log(`Server started at port ${PORT}`);
+    });
 });
 
 // main route
