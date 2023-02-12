@@ -51,9 +51,9 @@ dbConnect(process.env.MONGO_URI, (error) => {
 // main route
 app.get("/search", (req, res) => {
     let translator = {
-        'name': 'Ime',
-        'author': 'Autor',
-        'price': 'PriceEUR'
+        'name': 'Name',
+        'author': 'Author',
+        'price': 'Price'
     }
     let price = req.query.price;
     let sort = req.query.sort;
@@ -68,13 +68,13 @@ app.get("/search", (req, res) => {
         findQuery = { $or: [] };
         words.forEach(word => {
             findQuery['$or'].push({
-                Ime: {
+                Name: {
                     $regex: new RegExp(`${word}`),
                     $options: 'i'
                 }
             });
             findQuery['$or'].push({
-                Autor: {
+                Author: {
                     $regex: new RegExp(`${word}`),
                     $options: 'i'
                 }
